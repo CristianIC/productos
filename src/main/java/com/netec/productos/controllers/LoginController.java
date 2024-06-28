@@ -14,6 +14,7 @@ import com.netec.productos.dto.inputs.LoginInDTO;
 import com.netec.productos.dto.outputs.AuthResponseDTO;
 import com.netec.productos.dto.outputs.ResponseDTO;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -30,6 +31,14 @@ public class LoginController {
 		AuthResponseDTO authResponseDTO = this.authService.login(inDTO);
 		HttpStatus status = HttpStatus.OK;
 		ResponseDTO<AuthResponseDTO> response = new ResponseDTO<>(true, status.value(), "Acceso autorizado", authResponseDTO);
+		return new ResponseEntity<>(response, status);
+	}
+	
+	@PostMapping(path = "/refresh", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ResponseDTO<AuthResponseDTO>> refrestToken(HttpServletRequest request) {
+		AuthResponseDTO authResponseDTO = this.authService.refreshToken(request);
+		HttpStatus status = HttpStatus.OK;
+		ResponseDTO<AuthResponseDTO> response = new ResponseDTO<>(true, status.value(), "Acceso actualizado", authResponseDTO);
 		return new ResponseEntity<>(response, status);
 	}
 

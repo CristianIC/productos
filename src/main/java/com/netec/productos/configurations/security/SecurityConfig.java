@@ -44,6 +44,7 @@ public class SecurityConfig {
 					auth.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
 					auth.requestMatchers(HttpMethod.POST, "/auth/logout").permitAll();
 					auth.requestMatchers(HttpMethod.POST, "/auth/register").permitAll();
+					auth.requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll();
 					// configurar los endpoints privados - Se configura en los metodos
 					auth.anyRequest().authenticated();
 				}).authenticationProvider(this.authenticationProvider())

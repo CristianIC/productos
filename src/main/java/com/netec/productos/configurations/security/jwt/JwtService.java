@@ -25,7 +25,18 @@ public class JwtService {
 	
 	private String tokenSecret = "870ab37afebfa098c19e45af4cbf3817ad2233648ca459330d0f34afa5861431";
 	
-	public String generateToken(UserDetails userDetails) {
+	private Long expiredToken = (long) (60 * 1000);
+	private Long expiredRefreshToken = (long) (120 * 1000);
+	
+	public String generateAccessToken(UserDetails userDetails) {
+		return this.generateToken(userDetails, 15000L);
+	}
+	
+	public String generateRefreshToken(UserDetails userDetails) {
+		return this.generateToken(userDetails, this.expiredRefreshToken);
+	}
+	
+	private String generateToken(UserDetails userDetails, Long expireTime) {
 		Map<String, Object> claims = new HashMap<>();
 		String authorities = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
 		claims.put("roles", authorities);
@@ -36,7 +47,7 @@ public class JwtService {
 				.subject(userDetails.getUsername())
 				.issuedAt(new Date(System.currentTimeMillis()))
 				.id(UUID.randomUUID().toString())
-				.expiration(new Date(System.currentTimeMillis()  + (60 * 1000)))
+				.expiration(new Date(System.currentTimeMillis()  + expireTime))
 				.and()
 				.signWith(this.getKey(), Jwts.SIG.HS256)
 				.compact();
